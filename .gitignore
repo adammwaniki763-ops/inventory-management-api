@@ -1,0 +1,55 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+
+# Pytest cache and coverage output
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Environment and secret files
+.env
+.env.*
+
+# Local database files if a later version adds SQLite
+*.db
+*.sqlite
+*.sqlite3
+
+# Editor settings
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+
+# Build and distribution output
+build/
+dist/
+*.zip
+
+# Temporary logs and generated output
+*.log
+*.tmp
+
+# This project is Python-only.
+# No TypeScript files belong here.
+# No TSX files belong here.
+# Keep source files and tests tracked.
+# Keep generated files out of commits.
+# Keep credentials out of Git history.
+# Keep local virtual environments out of archives.
+# End of ignore rules.
+# Preserve the clean submission archive.
+# Review ignored files with: git status --ignored.
+# End of file.
+# Ready for submission.
