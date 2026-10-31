@@ -55,3 +55,55 @@ def create_app():
         """Update only fields supplied for an existing item."""
         payload = request.get_json(silent=True)
         if payload is None:
+            return jsonify({"error": "Request body must be valid JSON."}), 400
+        try:
+            item = update_item(item_id, payload)
+        except InventoryError as error:
+            code = 404 if "not found" in str(error).lower() else 400
+            return jsonify({"error": str(error)}), code
+        return jsonify(item), 200
+
+    @app.delete("/inventory/<int:item_id>")
+    def remove_inventory_item(item_id):
+        """Delete an item and return the deleted object."""
+        try:
+            deleted = delete_item(item_id)
+        except InventoryError as error:
+            return jsonify({"error": str(error)}), 404
+        return jsonify({"message": "Inventory item deleted.", "item": deleted}), 200
+
+    @app.get("/external-products/search")
+    def search_external_products():
+        """Search OpenFoodFacts using a barcode or product-name query."""
+        query = request.args.get("query", "").strip()
+        if not query:
+            return jsonify({"error": "A query parameter is required."}), 400
+        try:
+            products = search_open_food_facts(query)
+        except ExternalAPIError as error:
+            return jsonify({"error": str(error)}), 502
+        return jsonify({"query": query, "products": products}), 200
+
+    @app.get("/health")
+    def health_check():
+        """Return a simple service health response."""
+        return jsonify({"status": "ok", "service": "inventory-api"}), 200
+
+    @app.errorhandler(404)
+    def handle_unknown_route(error):
+        """Return JSON instead of Flask's default HTML error."""
+        return jsonify({"error": "Route not found."}), 404
+
+    @app.errorhandler(405)
+    def handle_wrong_method(error):
+        """Return JSON when a route receives the wrong HTTP method."""
+        return jsonify({"error": "HTTP method is not allowed for this route."}), 405
+
+    return app
+
+
+app = create_app()
+
+
+if __name__ == "__main__":
+    app.run(debug=True)
